@@ -13,9 +13,9 @@ public class Protocol {
     private String version;
     private int senderId;
     private String fileId;
-    private int chunckNo;
-    private int replicationDeg;
-    private byte[] body;
+    private int chunckNo = -1;
+    private int replicationDeg = -1;
+    private byte[] body = null;
 
     public Protocol(){}
 
@@ -23,7 +23,10 @@ public class Protocol {
 
         String[] headAndBody = message.split("\r\n\r\n");
         String header = headAndBody[0];
-        this.body = headAndBody[1].getBytes();
+
+        if (headAndBody.length != 1){
+            this.body = headAndBody[1].getBytes();
+        }
 
         String[] parts = header.split(" ");
         ArrayList<String> elements = new ArrayList<String>();//same as parts but without empty strings in between;
@@ -33,62 +36,53 @@ public class Protocol {
             }
         }
 
-        //TODO: attribute value to messagetype, version, senderId and fileId
+        this.messageType = elements.get(0);
+        this.version = elements.get(1);
+        this.senderId = Integer.parseInt(elements.get(2));
+        this.fileId = elements.get(3);
 
-        switch (elements.get(0)){
-            case PUTCHUNK:
-                handlePutchunk(String header, byte[] data);
-                break;
-            case STORED:
-                handleStored(String header);
-                break;
-            case GETCHUNK:
-                handleGetchunk(String header);
-                break;
-            case CHUNK:
-                handleChunk(String header, byte[] data);
-                break;
-            case DELETE:
-                handleDelete(String header);
-                break;
-            case REMOVED:
-                handleRemoved(String header);
-                break;
-            default:
-                break;
+        //existing protocols are: PUTCHUNK, STORED, GETCHUNK, CHUNK, DELETE and REMOVED
+        if (!this.messageType.equals(DELETE)){//all fields necessary for DELETE are already filled out
+
+            this.chunckNo = Integer.parseInt(elements.get(4));
+
+            if (this.messageType.equals(PUTCHUNK)){
+                this.replicationDeg = Integer.parseInt(elements.get(5));
+            }
+        }
+    }
+
+    public String toString() {
+        String hexBody = "";
+
+        if (this.body != null){
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < this.body.length; i++){
+                sb.append(String.format("%02X%s", this.body[i], (i < this.body.length - 1) ? "-" : ""));
+            }
+            hexBody = "\nBody: |" + sb.toString() + "|";
         }
 
-
-
-
-
-    }
-
-    public void handlePutchunk(String header, byte[] data){
-
-    }
-
-    public void handleStored(String header){
-
-    }
-
-    public void handleGetchunk(String header){
-
-    }
-
-    public void handleChunk(String header, byte[] data){
-
-    }
-
-    public void handleDelete(String header){
-
-    }
-
-    public void handleRemoved(String header{
+        return "Message Type: " + this.messageType + "\nVersion: " + this.version +
+                "\nSenderId: " + this.senderId + "\nFileId: |" + this.fileId + "|\nChunkNo: " +
+                this.chunckNo + "\nReplicationDeg: " + this.replicationDeg + hexBody;
 
     }
 
     public static void main(String args[]){
-        Protocol p = new Protocol("messagetype    version   restofshtuff\r\n\r\nrandomshuffffffffffaçsldkfjaponapoegioqupfoiajpqwoip2938r9");
+
+        //TODO: fix protocols that result in error
+        String putchunk1 =  "PUTCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5 2   \r\n\r\nrandomshuffffffffffaçsldkfjapfghonapoegioqupfoiajpqwoip2938r9";
+        String putchunk2 =  "PUTCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5 2   \r\n\r\n";
+        String stored =     "STORED     1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+        String getchunk =   "GETCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+        String chunk =      "CHUNK      1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\nrandomshuffffffffffaçsldkfjapfghonapoegioqupfoiajpqwoip2938r9";
+        String delete =     "DELETE     1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721        \r\n\r\n";
+        String removed =    "REMOVED    1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+
+        Protocol p = new Protocol(putchunk2);
+
+
+        System.out.println(p.toString());
     }
 }
