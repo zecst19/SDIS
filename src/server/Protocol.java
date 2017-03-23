@@ -9,6 +9,8 @@ public class Protocol {
     private final String DELETE =   "DELETE";
     private final String REMOVED =  "REMOVED";
 
+    private final String CRLF =     "\r\n\r\n"; //actually CRLFCRLF but who cares
+
     private String messageType;
     private String version;
     private int senderId;
@@ -21,7 +23,7 @@ public class Protocol {
 
     public Protocol(String message){
 
-        String[] headAndBody = message.split("\r\n\r\n");
+        String[] headAndBody = message.split(CRLF);
         String header = headAndBody[0];
 
         if (headAndBody.length != 1){
@@ -52,7 +54,37 @@ public class Protocol {
         }
     }
 
+    //TODO: alter toString() in order to return actual command to be sent;
     public String toString() {
+        String hexBody = "", header, body;
+
+        if (this.body != null){
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0; i < this.body.length; i++){
+                sb.append(String.format("%02X%s", this.body[i], (i < this.body.length - 1) ? "-" : ""));
+            }
+            hexBody = "\nBody: |" + sb.toString() + "|";
+        }
+
+        header = this.messageType + " " + this.version + " " + this.senderId + " " + this.fileId;
+        if (!this.messageType.equals(DELETE)){
+
+            header += " " + this.chunckNo;
+
+            if (this.messageType.equals(PUTCHUNK)){
+                header += " " + this.replicationDeg;
+            }
+        }
+
+        if (this.messageType.equals(PUTCHUNK) || this.messageType.equals(CHUNK)){
+            return header + CRLF + this.body;
+        }
+        else {
+            return header + CRLF;
+        }
+    }
+
+    public void printMessage() {
         String hexBody = "";
 
         if (this.body != null){
@@ -63,9 +95,9 @@ public class Protocol {
             hexBody = "\nBody: |" + sb.toString() + "|";
         }
 
-        return "Message Type: " + this.messageType + "\nVersion: " + this.version +
+        System.out.println("Message Type: " + this.messageType + "\nVersion: " + this.version +
                 "\nSenderId: " + this.senderId + "\nFileId: |" + this.fileId + "|\nChunkNo: " +
-                this.chunckNo + "\nReplicationDeg: " + this.replicationDeg + hexBody;
+                this.chunckNo + "\nReplicationDeg: " + this.replicationDeg + hexBody);
 
     }
 
@@ -80,9 +112,10 @@ public class Protocol {
         String delete =     "DELETE     1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721        \r\n\r\n";
         String removed =    "REMOVED    1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
 
-        Protocol p = new Protocol(putchunk2);
+        Protocol p = new Protocol(putchunk1);
 
 
+        p.printMessage();
         System.out.println(p.toString());
     }
 }
