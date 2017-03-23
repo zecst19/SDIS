@@ -1,3 +1,5 @@
+package server;
+
 import java.util.ArrayList;
 
 public class Protocol {
@@ -54,7 +56,6 @@ public class Protocol {
         }
     }
 
-    //TODO: alter toString() in order to return actual command to be sent;
     public String toString() {
         String hexBody = "", header, body;
 
