@@ -10,17 +10,17 @@ public class Server {
             //java Server 1.0 1 192.168.0.101:9636 228.0.0.0 4678 228.1.1.1 3215 228.2.2.2 9876
             System.out.println("Usage: java Server <Protocol Version> <ServerId> <Server Access Point> <MC addr> <MC port> <MDB addr> <MDB port> <MDR addr> <MDR port>");
 
-            Peer p = new Peer();
-
-            Listener listenerMC  = new Listener(args[3], "MC");
-            Listener listenerMDB = new Listener(args[5], "MDB");
-            Listener listenerMDR = new Listener(args[7], "MDR");
-
-            listenerMC.run();
-            listenerMDB.run();
-            listenerMDR.run();
-
             return;
         }
+
+        MNetwork network = new MNetwork(Integer.parseInt(args[1]), args[3], Integer.parseInt(args[4]), args[5], Integer.parseInt(args[6]), args[7], Integer.parseInt(args[8]));
+
+        Listener listenerMC  = new Listener(args[3], "MC");
+        Listener listenerMDB = new Listener(args[5], "MDB");
+        Listener listenerMDR = new Listener(args[7], "MDR");
+
+        listenerMC.run();
+        listenerMDB.run();
+        listenerMDR.run();
     }
 }
