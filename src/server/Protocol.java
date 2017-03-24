@@ -4,12 +4,12 @@ import java.util.ArrayList;
 
 public class Protocol {
 
-    private final String PUTCHUNK = "PUTCHUNK";
-    private final String STORED =   "STORED";
-    private final String GETCHUNK = "GETCHUNK";
-    private final String CHUNK =    "CHUNK";
-    private final String DELETE =   "DELETE";
-    private final String REMOVED =  "REMOVED";
+    public final String PUTCHUNK = "PUTCHUNK";
+    public final String STORED =   "STORED";
+    public final String GETCHUNK = "GETCHUNK";
+    public final String CHUNK =    "CHUNK";
+    public final String DELETE =   "DELETE";
+    public final String REMOVED =  "REMOVED";
 
     private final String CRLF =     "\r\n\r\n"; //actually CRLFCRLF but who cares
 
@@ -17,7 +17,7 @@ public class Protocol {
     private String version;
     private int senderId;
     private String fileId;
-    private int chunckNo = -1;
+    private int chunkNo = -1;
     private int replicationDeg = -1;
     private byte[] body = null;
 
@@ -48,12 +48,40 @@ public class Protocol {
         //existing protocols are: PUTCHUNK, STORED, GETCHUNK, CHUNK, DELETE and REMOVED
         if (!this.messageType.equals(DELETE)){//all fields necessary for DELETE are already filled out
 
-            this.chunckNo = Integer.parseInt(elements.get(4));
+            this.chunkNo = Integer.parseInt(elements.get(4));
 
             if (this.messageType.equals(PUTCHUNK)){
                 this.replicationDeg = Integer.parseInt(elements.get(5));
             }
         }
+    }
+
+    public String getMessageType() {
+        return messageType;
+    }
+
+    public String getVersion() {
+        return version;
+    }
+
+    public int getSenderId() {
+        return senderId;
+    }
+
+    public String getFileId() {
+        return fileId;
+    }
+
+    public int getChunkNo() {
+        return chunkNo;
+    }
+
+    public int getReplicationDeg() {
+        return replicationDeg;
+    }
+
+    public byte[] getBody() {
+        return body;
     }
 
     public String toString() {
@@ -70,7 +98,7 @@ public class Protocol {
         header = this.messageType + " " + this.version + " " + this.senderId + " " + this.fileId;
         if (!this.messageType.equals(DELETE)){
 
-            header += " " + this.chunckNo;
+            header += " " + this.chunkNo;
 
             if (this.messageType.equals(PUTCHUNK)){
                 header += " " + this.replicationDeg;
@@ -98,7 +126,7 @@ public class Protocol {
 
         System.out.println("Message Type: " + this.messageType + "\nVersion: " + this.version +
                 "\nSenderId: " + this.senderId + "\nFileId: |" + this.fileId + "|\nChunkNo: " +
-                this.chunckNo + "\nReplicationDeg: " + this.replicationDeg + hexBody);
+                this.chunkNo + "\nReplicationDeg: " + this.replicationDeg + hexBody);
 
     }
 

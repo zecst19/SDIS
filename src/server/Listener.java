@@ -1,5 +1,6 @@
 package server;
 
+import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -7,40 +8,87 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
 import java.util.concurrent.ThreadLocalRandom;
 
-/**
- * Created by Gustavo on 24/03/2017.
- */
 public class Listener implements Runnable {
 
     private final Thread thread;
     private volatile boolean running = true;
+    private MNetwork network;
+    private int MNType;
+    private InetAddress mAddress;
+    private MulticastSocket mSocket;
 
-    public Listener(String mc_address, String name){
-        thread = new Thread(this, name);
+    public Listener(int MNType, MNetwork n) {
+        this.network = n;
+        this.MNType = MNType;
+        thread = new Thread(this);
+    }
+
+    public void subscribe() throws IOException{
+        this.mAddress = InetAddress.getByName(network.addresses[this.MNType]);
+        this.mSocket = new MulticastSocket(network.ports[this.MNType]);
+        this.mSocket.joinGroup(this.mAddress);
     }
 
     public void start(){
         thread.start();
-        //subscribe to multicast channel
     }
 
     public void stop(){
         this.running = false;
     }
 
-    public void run(){
+    public void run() {
+
+        try {
+            this.subscribe();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+
         while (running){
             //listen to and handle requests
+            byte[] msg = new byte[network.CHUNK_SIZE];
+            DatagramPacket mPacket = new DatagramPacket(msg, msg.length);
+            try {
+                mSocket.receive(mPacket);
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+            Protocol p = new Protocol(new String(mPacket.getData()));
+
+            if (p.getMessageType().equals(p.PUTCHUNK)){
+                //TODO: deploy worker
+            }
+            else if (p.getMessageType().equals(p.STORED)){
+                //deploy worker
+            }
+            else if (p.getMessageType().equals(p.GETCHUNK)){
+                //deploy worker
+            }
+            else if (p.getMessageType().equals(p.CHUNK)){
+                //deploy worker
+            }
+            else if (p.getMessageType().equals(p.DELETE)){
+                //deploy worker
+            }
+            else if (p.getMessageType().equals(p.REMOVED)){
+                //deploy worker
+            }
+            else this.stop();
+
         }
     }
 
-    public String generateFileId(String filename) throws Exception, UnknownHostException, SocketException {
+    public String generateFileId(String filename) throws IOException, NoSuchAlgorithmException {
         String cwd = System.getProperty("user.dir");
 
-        //"src/server".length = 10 <--
+        //"src/server".length = 10 <-------------------|
         String homedir = cwd.substring(0, cwd.length()-10) + "localfiles/";
         Path file = Paths.get(homedir + filename);
 
@@ -52,6 +100,7 @@ public class Listener implements Runnable {
         long size = attributes.size();
 
         //Getting local mac address
+        //TODO: find out if there's a better way to do this
         //eth0 if not on VM; enp0s3 otherwise
         Enumeration<InetAddress> netIface = NetworkInterface.getByName("eth0").getInetAddresses();
 
@@ -77,6 +126,8 @@ public class Listener implements Runnable {
         //Creating fileId unique string
         String fileId = filename + owner + created + dateModified + size;
         System.out.println(fileId);
+
+
         MessageDigest digest = MessageDigest.getInstance("SHA-256");
         byte[] hash = digest.digest(fileId.getBytes(StandardCharsets.UTF_8));
 
