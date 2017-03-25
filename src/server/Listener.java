@@ -64,21 +64,27 @@ public class Listener implements Runnable {
 
             if (p.getMessageType().equals(p.PUTCHUNK)){
                 //TODO: deploy worker
+                new Putchunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.STORED)){
                 //deploy worker
+                new Stored(network, p).start();
             }
             else if (p.getMessageType().equals(p.GETCHUNK)){
                 //deploy worker
+                new Getchunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.CHUNK)){
                 //deploy worker
+                new Chunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.DELETE)){
                 //deploy worker
+                new Delete(network, p).start();
             }
             else if (p.getMessageType().equals(p.REMOVED)){
                 //deploy worker
+                new Removed(network, p).start();
             }
             else this.stop();
 
