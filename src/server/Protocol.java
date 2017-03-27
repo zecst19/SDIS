@@ -60,28 +60,56 @@ public class Protocol {
         return messageType;
     }
 
+    public void setMessageType(String messageType) {
+        this.messageType = messageType;
+    }
+
     public String getVersion() {
         return version;
+    }
+
+    public void setVersion(String version) {
+        this.version = version;
     }
 
     public int getSenderId() {
         return senderId;
     }
 
+    public void setSenderId(int senderId) {
+        this.senderId = senderId;
+    }
+
     public String getFileId() {
         return fileId;
+    }
+
+    public void setFileId(String fileId) {
+        this.fileId = fileId;
     }
 
     public int getChunkNo() {
         return chunkNo;
     }
 
+    public void setChunkNo(int chunkNo) {
+        this.chunkNo = chunkNo;
+    }
+
     public int getReplicationDeg() {
         return replicationDeg;
     }
 
+    public void setReplicationDeg(int replicationDeg) {
+        this.replicationDeg = replicationDeg;
+    }
+
     public byte[] getBody() {
         return body;
+    }
+
+    public void setBody(byte[] body) {
+        this.body = body;
     }
 
     public String toString() {

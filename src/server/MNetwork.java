@@ -5,6 +5,8 @@ public class MNetwork {
     public int[] ports;             //{4678,          3215,        9876}
     public int peerID;
     public final int CHUNK_SIZE = 64000;
+    public final String VERSION = "1.0";
+    public final int MC = 0, MDB = 1, MDR = 2;
 
     public MNetwork(int peer_id, String mc_addr, int mc_port, String mdb_addr, int mdb_port, String mdr_addr, int mdr_port){
         this.peerID = peer_id;

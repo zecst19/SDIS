@@ -62,8 +62,9 @@ public class Listener implements Runnable {
             }
             Protocol p = new Protocol(new String(mPacket.getData()));
 
+            //all conditions are verified on worker threads
             if (p.getMessageType().equals(p.PUTCHUNK)){
-                //TODO: deploy worker
+                //deploy worker
                 new Putchunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.STORED)){
@@ -143,9 +144,5 @@ public class Listener implements Runnable {
         }
 
         return strbuf.toString();
-    }
-
-    public int randomDelay(){
-        return ThreadLocalRandom.current().nextInt(0, 400 + 1);
     }
 }

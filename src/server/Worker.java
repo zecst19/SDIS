@@ -1,5 +1,11 @@
 package server;
 
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.util.concurrent.ThreadLocalRandom;
+
 public abstract class Worker implements Runnable {
     protected Thread thread;
     protected MNetwork network;
@@ -11,6 +17,23 @@ public abstract class Worker implements Runnable {
         this.thread = new Thread(this);
     }
 
-    //TODO: each protocol processed by a Peer will be handled within a worker thread
+    public void sendMessage(String message, int mType){
+        try (DatagramSocket socket = new DatagramSocket()) {
+            InetAddress address = InetAddress.getByName(network.addresses[mType]);
+            DatagramPacket packet = new DatagramPacket(message.getBytes(),
+                    message.length(), address, network.ports[mType]);
+            socket.send(packet);
+
+            //System.out.println(msg);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public int randomDelay(){
+        return ThreadLocalRandom.current().nextInt(0, 400 + 1);
+    }
+
 
 }

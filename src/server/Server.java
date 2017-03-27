@@ -15,12 +15,14 @@ public class Server {
 
         MNetwork network = new MNetwork(Integer.parseInt(args[1]), args[3], Integer.parseInt(args[4]), args[5], Integer.parseInt(args[6]), args[7], Integer.parseInt(args[8]));
 
-        Listener listenerMC  = new Listener(0, network);
-        Listener listenerMDB = new Listener(1, network);
+        Listener listenerMC  = new Listener(network.MC, network);
+        Listener listenerMDB = new Listener(network.MDB, network);
         //Listener listenerMDR = new Listener(2, network);
+        Request clientRequest = new Request();
 
         listenerMC.start();
         listenerMDB.start();
         //listenerMDR.start();
+        clientRequest.start();
     }
 }
