@@ -11,6 +11,11 @@ public class Stored extends Worker {
     }
 
     public void run(){
-
+        try {
+            Request.queue.put(protocol); //TODO: can't be this easy
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 }

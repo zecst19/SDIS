@@ -22,7 +22,7 @@ public class Putchunk extends Worker {
         Protocol stored = new Protocol();
         stored.setMessageType(stored.STORED);
         stored.setVersion(network.VERSION);
-        stored.setSenderId(protocol.getSenderId());
+        stored.setSenderId(network.peerID);
         stored.setFileId(protocol.getFileId());
         stored.setChunkNo(protocol.getChunkNo());
 

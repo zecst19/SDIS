@@ -158,6 +158,8 @@ public class Protocol {
 
     }
 
+    //TODO: send multicast message from here
+
     public static void main(String args[]){
 
         //TODO: fix protocols that result in error
