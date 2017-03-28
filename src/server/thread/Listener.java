@@ -26,7 +26,7 @@ public class Listener implements Runnable {
     public Listener(int MNType, MNetwork n) {
         this.network = n;
         this.MNType = MNType;
-        thread = new Thread(this);
+        thread = new Thread(this, "Listener");
     }
 
     public void subscribe() throws IOException{
@@ -67,10 +67,12 @@ public class Listener implements Runnable {
             //all conditions are verified on worker threads
             if (p.getMessageType().equals(p.PUTCHUNK)){
                 //deploy worker
+                System.out.println("Received PUTCHUNK");
                 new Putchunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.STORED)){
                 //deploy worker
+                System.out.println("Received STORED");
                 new Stored(network, p).start();
             }
             else if (p.getMessageType().equals(p.GETCHUNK)){

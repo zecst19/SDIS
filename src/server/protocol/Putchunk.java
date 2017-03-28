@@ -19,10 +19,11 @@ public class Putchunk extends Worker {
 
     public void run(){
         //TODO: handle request (copy chunk into filesystem)
-
+        System.out.println("Handling PUTCHUNK");
 
         //reply with STORED
         Protocol stored = new Protocol();
+        stored.setNetwork(network);
         stored.setMessageType(stored.STORED);
         stored.setVersion(network.VERSION);
         stored.setSenderId(network.peerID);
@@ -36,6 +37,6 @@ public class Putchunk extends Worker {
             e.printStackTrace();
         }
 
-        this.sendMessage(stored.toString(), network.MC);
+        stored.sendMessage(network.MC);
     }
 }

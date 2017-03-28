@@ -1,8 +1,8 @@
 package server;
 
 public class MNetwork {
-    public String[] addresses;      //{228.0.0.0,     228.1.1.1,   228.2.2.2}
-    public int[] ports;             //{4678,          3215,        9876}
+    public String[] addresses = new String[3];      //{228.0.0.0,     228.1.1.1,   228.2.2.2}
+    public int[] ports = new int[3];             //{4678,          3215,        9876}
     public int peerID;
     public final int CHUNK_SIZE = 64000;
     public final String VERSION = "1.0";
@@ -16,5 +16,9 @@ public class MNetwork {
         this.ports[0] = mc_port;
         this.ports[1] = mdb_port;
         this.ports[2] = mdr_port;
+
+        System.out.println(this.addresses[0]);
+        System.out.println(this.addresses[1]);
+        System.out.println(this.addresses[2]);
     }
 }

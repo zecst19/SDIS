@@ -1,5 +1,11 @@
 package server.protocol;
 
+import server.MNetwork;
+
+import java.io.IOException;
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
 import java.util.ArrayList;
 
 public class Protocol {
@@ -20,6 +26,7 @@ public class Protocol {
     private int chunkNo = -1;
     private int replicationDeg = -1;
     private byte[] body = null;
+    private MNetwork network;
 
     public Protocol(){}
 
@@ -112,6 +119,14 @@ public class Protocol {
         this.body = body;
     }
 
+    public MNetwork getNetwork() {
+        return network;
+    }
+
+    public void setNetwork(MNetwork network) {
+        this.network = network;
+    }
+
     public String toString() {
         String hexBody = "", header, body;
 
@@ -158,7 +173,19 @@ public class Protocol {
 
     }
 
-    //TODO: send multicast message from here
+    public void sendMessage(int mType){
+        try (DatagramSocket socket = new DatagramSocket()) {
+            InetAddress address = InetAddress.getByName(network.addresses[mType]);
+            DatagramPacket packet = new DatagramPacket(this.toString().getBytes(),
+                    this.toString().length(), address, network.ports[mType]);
+            socket.send(packet);
+
+            System.out.println("SENDMESSAGE: " + this.toString());
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     public static void main(String args[]){
 
