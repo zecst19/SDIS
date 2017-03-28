@@ -1,4 +1,7 @@
-package server;
+package server.protocol;
+
+import server.MNetwork;
+import server.thread.Worker;
 
 public class Getchunk extends Worker {
 

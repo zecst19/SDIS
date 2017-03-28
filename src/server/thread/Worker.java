@@ -1,4 +1,7 @@
-package server;
+package server.thread;
+
+import server.MNetwork;
+import server.protocol.Protocol;
 
 import java.io.IOException;
 import java.net.DatagramPacket;

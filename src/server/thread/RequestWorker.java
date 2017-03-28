@@ -1,4 +1,6 @@
-package server;
+package server.thread;
+
+import server.protocol.Protocol;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;

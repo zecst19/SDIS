@@ -1,4 +1,8 @@
-package server;
+package server.protocol;
+
+import server.MNetwork;
+import server.thread.Request;
+import server.thread.Worker;
 
 public class Stored extends Worker {
 

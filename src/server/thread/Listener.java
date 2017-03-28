@@ -1,4 +1,7 @@
-package server;
+package server.thread;
+
+import server.MNetwork;
+import server.protocol.*;
 
 import java.io.IOException;
 import java.net.*;
@@ -10,7 +13,6 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
-import java.util.concurrent.ThreadLocalRandom;
 
 public class Listener implements Runnable {
 
