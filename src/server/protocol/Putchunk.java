@@ -11,9 +11,14 @@ public class Putchunk extends Worker {
     }
 
     public void start(){
+        System.out.println("SenderID: " + protocol.getSenderId());
+        System.out.println("My ID: " + network.peerID);
         if (protocol.getSenderId() != network.peerID){
             //TODO: check if chunk is already stored as well
             thread.start();
+        }
+        else {
+            System.out.println("Ignoring");
         }
     }
 

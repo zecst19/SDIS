@@ -12,13 +12,18 @@ public class Stored extends Worker {
     }
 
     public void start(){
-        thread.start();
+        if (protocol.getSenderId() != network.peerID){
+            thread.start();
+        } else {
+            System.out.println("Ignoring Stored");
+        }
     }
 
     public void run(){
         System.out.println("Handling STORED");
         try {
             RequestWorker.responseQueue.put(protocol); //TODO: can't be this easy
+            System.out.println("Sending STORED to RequestWorker");
         }
         catch (InterruptedException e){
             e.printStackTrace();

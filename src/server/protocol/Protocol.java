@@ -186,7 +186,7 @@ public class Protocol {
             e.printStackTrace();
         }
     }
-
+/*
     public static void main(String args[]){
 
         //TODO: fix protocols that result in error
@@ -204,4 +204,5 @@ public class Protocol {
         p.printMessage();
         System.out.println(p.toString());
     }
+    */
 }

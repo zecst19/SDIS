@@ -3,6 +3,7 @@ package server.thread;
 import server.MNetwork;
 import server.protocol.*;
 
+import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.io.IOException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
@@ -37,6 +38,12 @@ public class Listener implements Runnable {
 
     public void start(){
         thread.start();
+        String type;
+        if (this.MNType == 0){
+            type = "MC";
+        } else {type = "MDB";}
+
+        System.out.println("Started listener " + type);
     }
 
     public void stop(){
@@ -44,6 +51,7 @@ public class Listener implements Runnable {
     }
 
     public void run() {
+        System.out.println("Listener Running");
 
         try {
             this.subscribe();
@@ -52,12 +60,16 @@ public class Listener implements Runnable {
             e.printStackTrace();
         }
 
+        System.out.println("Listener Subscribed");
+
         while (running){
+            System.out.println("Listener Running");
             //listen to and handle requests
             byte[] msg = new byte[network.CHUNK_SIZE];
             DatagramPacket mPacket = new DatagramPacket(msg, msg.length);
             try {
                 mSocket.receive(mPacket);
+                System.out.println("Received Message");
             }
             catch (IOException e){
                 e.printStackTrace();
@@ -112,8 +124,8 @@ public class Listener implements Runnable {
 
         //Getting local mac address
         //TODO: find out if there's a better way to do this
-        //eth0 if not on VM; enp0s3 otherwise
-        Enumeration<InetAddress> netIface = NetworkInterface.getByName("eth0").getInetAddresses();
+        //eth0 if not on VM; enp0s9 otherwise
+        Enumeration<InetAddress> netIface = NetworkInterface.getByName("enp0s9").getInetAddresses();
 
         InetAddress localAddress = netIface.nextElement();
         while(netIface.hasMoreElements())
