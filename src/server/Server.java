@@ -25,19 +25,28 @@ public class Server {
         RequestWorker clientRequest = new RequestWorker(network);
         Listener listenerMC  = new Listener(network.MC, network);
         Listener listenerMDB = new Listener(network.MDB, network);
-        //Listener listenerMDR = new Listener(2, network);
+        Listener listenerMDR = new Listener(network.MDR, network);
+
 
         clientRequest.start();
         listenerMC.start();
         listenerMDB.start();
-        //listenerMDR.start();
+        listenerMDR.start();
 
 
-        //TODO: this code will be moved into client application
+
         //send Request to RequestWorker
         //testing only
-        String putchunk1 =  "PUTCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  1 1   \r\n\r\nrandomshuffffffffffaçsldkfjapfghonapoegioqupfoiajpqwoip2938r9";
-        Protocol request = new Protocol(putchunk1);
+        String putchunk1 =  "PUTCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5 1   \r\n\r\nrandomshtuffffffffffaçsldkfjapfghonapoegioqupfoiajpqwoip2938r9";
+        String putchunk2 =  "PUTCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5 1   \r\n\r\n";
+        String stored =     "STORED     1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+        String getchunk =   "GETCHUNK   1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+        String chunk =      "CHUNK      1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\nrandomshtuffffffffffaçsldkfjapfghonapoegioqupfoiajpqwoip2938r9";
+        String delete =     "DELETE     1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721        \r\n\r\n";
+        String removed =    "REMOVED    1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
+
+        //TODO: this code will be moved into client application
+        Protocol request = new Protocol(getchunk);
         if (network.peerID == 1) {
             try {
                 Thread.sleep(500);

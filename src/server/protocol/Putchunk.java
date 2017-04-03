@@ -18,7 +18,7 @@ public class Putchunk extends Worker {
             thread.start();
         }
         else {
-            System.out.println("Ignoring");
+            System.out.println("Ignoring PUTCHUNK");
         }
     }
 

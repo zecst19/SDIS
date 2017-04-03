@@ -22,7 +22,7 @@ public class Stored extends Worker {
     public void run(){
         System.out.println("Handling STORED");
         try {
-            RequestWorker.responseQueue.put(protocol); //TODO: can't be this easy
+            RequestWorker.responseQueue.put(protocol);
             System.out.println("Sending STORED to RequestWorker");
         }
         catch (InterruptedException e){

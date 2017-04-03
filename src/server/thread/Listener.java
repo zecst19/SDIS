@@ -14,6 +14,8 @@ import java.nio.file.attribute.BasicFileAttributes;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Enumeration;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 public class Listener implements Runnable {
 
@@ -41,7 +43,9 @@ public class Listener implements Runnable {
         String type;
         if (this.MNType == 0){
             type = "MC";
-        } else {type = "MDB";}
+        } else if (this.MNType == 1){
+            type = "MDB";
+        } else {type = "MDR";}
 
         System.out.println("Started listener " + type);
     }
@@ -51,7 +55,6 @@ public class Listener implements Runnable {
     }
 
     public void run() {
-        System.out.println("Listener Running");
 
         try {
             this.subscribe();
@@ -60,16 +63,12 @@ public class Listener implements Runnable {
             e.printStackTrace();
         }
 
-        System.out.println("Listener Subscribed");
-
         while (running){
-            System.out.println("Listener Running");
             //listen to and handle requests
             byte[] msg = new byte[network.CHUNK_SIZE];
             DatagramPacket mPacket = new DatagramPacket(msg, msg.length);
             try {
                 mSocket.receive(mPacket);
-                System.out.println("Received Message");
             }
             catch (IOException e){
                 e.printStackTrace();
@@ -89,10 +88,12 @@ public class Listener implements Runnable {
             }
             else if (p.getMessageType().equals(p.GETCHUNK)){
                 //deploy worker
+                System.out.println("Received GETCHUNK");
                 new Getchunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.CHUNK)){
                 //deploy worker
+                System.out.println("Received CHUNK");
                 new Chunk(network, p).start();
             }
             else if (p.getMessageType().equals(p.DELETE)){

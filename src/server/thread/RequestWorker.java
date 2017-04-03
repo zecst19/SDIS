@@ -63,11 +63,12 @@ public class RequestWorker implements Runnable {
                         long end = start + (2^i)*1000;
                         while(System.currentTimeMillis() < end) {
                             if ((p = responseQueue.poll()) != null){    //queue will be filled with STORED messages
-                                if (p.getFileId().equals(request.getFileId())){
-                                    if (p.getChunkNo() == request.getChunkNo()){
-                                        actualReplication++;
-                                        System.out.println("replication++");
-                                    }
+                                if (p.getFileId().equals(request.getFileId())
+                                        && p.getChunkNo() == request.getChunkNo()
+                                        && p.getMessageType().equals(request.getMessageType())){
+
+                                    actualReplication++;
+                                    System.out.println("replication++");
                                 }
                             }
 
@@ -79,25 +80,33 @@ public class RequestWorker implements Runnable {
                             break;
                         }
                     }
+                }//or send restore
+                else if (request.getMessageType().equals(request.GETCHUNK)){
+                    request.sendMessage(network.MC);
+
+                    //wait
+                    Protocol p;
+
+                    while ((p = responseQueue.take()) != null ){
+                        
+                        if (p.getFileId().equals(request.getFileId())
+                                && p.getChunkNo() == request.getChunkNo()
+                                && p.getMessageType().equals(p.CHUNK)){
+
+                            System.out.println("CHUNK is here ready to be handled");
+                            //TODO: send results to client
+                        }
+                    }
                 }
+
+                //or send delete
+
+                //or else
             }
         }
         catch (InterruptedException e){
             e.printStackTrace();
         }
-
-
-
-
-
-
-
-
-        //or send restore
-
-        //or send delete
-
-        //or else
 
         System.out.println("RequestWorker finished");
         this.stop();
