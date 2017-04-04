@@ -71,8 +71,6 @@ public class RequestWorker implements Runnable {
                                     System.out.println("replication++");
                                 }
                             }
-
-                            //might have to sleep at the end
                         }
 
                         if (actualReplication >= request.getReplicationDeg()){
@@ -88,7 +86,7 @@ public class RequestWorker implements Runnable {
                     Protocol p;
 
                     while ((p = responseQueue.take()) != null ){
-                        
+
                         if (p.getFileId().equals(request.getFileId())
                                 && p.getChunkNo() == request.getChunkNo()
                                 && p.getMessageType().equals(p.CHUNK)){
@@ -98,10 +96,16 @@ public class RequestWorker implements Runnable {
                         }
                     }
                 }
+                else if (request.getMessageType().equals(request.DELETE)){
+                    //send DELETE over MC
+                    request.sendMessage(network.MC);
+                }
+                else if (request.getMessageType().equals(request.REMOVED)){
 
-                //or send delete
-
-                //or else
+                }
+                else {
+                    System.out.println("Invalid Protocol");
+                }
             }
         }
         catch (InterruptedException e){

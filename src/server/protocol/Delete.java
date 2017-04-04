@@ -10,10 +10,17 @@ public class Delete extends Worker {
     }
 
     public void start(){
-        thread.start();
+        System.out.println("SenderID: " + protocol.getSenderId());
+        System.out.println("My ID: " + network.peerID);
+        if (protocol.getSenderId() != network.peerID){
+            thread.start();
+        }
+        else {
+            System.out.println("Ignoring DELETE");
+        }
     }
 
     public void run(){
-
+        //TODO: delete chunk from filesystem
     }
 }
