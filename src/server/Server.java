@@ -4,6 +4,9 @@ import server.protocol.Protocol;
 import server.thread.Listener;
 import server.thread.RequestWorker;
 
+import java.io.File;
+import java.io.IOException;
+
 public class Server {
     public static void main(String[] args) {
         //Server <Protocol Version> <ServerId> <Server Access Point> <MC addr> <MC port> <MDB addr> <MDB port> <MDR addr> <MDR port>
@@ -19,6 +22,19 @@ public class Server {
             return;
         }
 
+        //Create files and directories
+        File backupfiles = new File("/home/gustavo/backupfiles");
+        backupfiles.mkdir();
+        File localfiles = new File("/home/gustavo/localfiles");
+        localfiles.mkdir();
+/*        File logs = new File("backupfiles/logs.txt");
+        try {
+            logs.createNewFile();
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+*/
         MNetwork network = new MNetwork(Integer.parseInt(args[1]), args[3], Integer.parseInt(args[4]), args[5], Integer.parseInt(args[6]), args[7], Integer.parseInt(args[8]));
         System.out.println(network);
 
@@ -46,7 +62,7 @@ public class Server {
         String removed =    "REMOVED    1.0  1  878d8276f9e332b22ebdbcd61384647d9d65df41790ff231fda7842081efb721  5     \r\n\r\n";
 
         //TODO: this code will be moved into client application
-        Protocol request = new Protocol(getchunk);
+        Protocol request = new Protocol(putchunk1);
         if (network.peerID == 1) {
             try {
                 Thread.sleep(500);

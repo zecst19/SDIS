@@ -2,6 +2,9 @@ package server.protocol;
 
 import server.MNetwork;
 import server.thread.Worker;
+import fileSystem.*;
+
+import java.io.IOException;
 
 public class Putchunk extends Worker {
 
@@ -23,8 +26,16 @@ public class Putchunk extends Worker {
     }
 
     public void run(){
-        //TODO: handle request (copy chunk into filesystem)
         System.out.println("Handling PUTCHUNK");
+
+        FileHelper fh = new FileHelper();
+
+        try {
+            fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
 
         //reply with STORED
         Protocol stored = new Protocol();

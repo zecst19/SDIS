@@ -32,13 +32,10 @@ public class RequestWorker implements Runnable {
         //TODO: protocol actions are to be initiated here (backup, restore, delete, manage storage, retrieve info)
         //still have to choose between udp, tcp or rmi
 
-        System.out.println("Yhere");
-
         Protocol request;
 
         try {
             while ((request = requestQueue.take()) != null ){
-                System.out.println("Yellow");
                 if (request.getMessageType().equals(request.PUTCHUNK)){
                     //TODO: split chunks bigger than 64kB
                     //send PUTCHUNK over MDB
@@ -58,14 +55,15 @@ public class RequestWorker implements Runnable {
                         }
                         //TODO: replace this and store information about where each chunk is
 
-                        //send PUTCHUNK again
+                        //TODO: send PUTCHUNK again
                         long start = System.currentTimeMillis();
                         long end = start + (2^i)*1000;
                         while(System.currentTimeMillis() < end) {
                             if ((p = responseQueue.poll()) != null){    //queue will be filled with STORED messages
+                                System.out.println("You've got mail");
                                 if (p.getFileId().equals(request.getFileId())
                                         && p.getChunkNo() == request.getChunkNo()
-                                        && p.getMessageType().equals(request.getMessageType())){
+                                        && p.getMessageType().equals(p.STORED)){
 
                                     actualReplication++;
                                     System.out.println("replication++");
