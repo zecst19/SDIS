@@ -5,7 +5,7 @@ import server.thread.Listener;
 import server.thread.RequestWorker;
 
 import java.io.File;
-import java.io.IOException;
+import java.util.ArrayList;
 
 public class Server {
     public static void main(String[] args) {
@@ -27,14 +27,9 @@ public class Server {
         backupfiles.mkdir();
         File localfiles = new File("/home/gustavo/localfiles");
         localfiles.mkdir();
-/*        File logs = new File("backupfiles/logs.txt");
-        try {
-            logs.createNewFile();
-        }
-        catch (IOException e){
-            e.printStackTrace();
-        }
-*/
+
+        Log.logs = new ArrayList<>();
+
         MNetwork network = new MNetwork(Integer.parseInt(args[1]), args[3], Integer.parseInt(args[4]), args[5], Integer.parseInt(args[6]), args[7], Integer.parseInt(args[8]));
         System.out.println(network);
 

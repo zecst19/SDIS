@@ -32,6 +32,8 @@ public class RequestWorker implements Runnable {
         //TODO: protocol actions are to be initiated here (backup, restore, delete, manage storage, retrieve info)
         //still have to choose between udp, tcp or rmi
 
+        responseQueue.clear();
+
         Protocol request;
 
         try {

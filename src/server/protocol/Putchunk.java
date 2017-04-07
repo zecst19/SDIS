@@ -1,5 +1,6 @@
 package server.protocol;
 
+import server.Log;
 import server.MNetwork;
 import server.thread.Worker;
 import fileSystem.*;
@@ -17,7 +18,15 @@ public class Putchunk extends Worker {
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
         if (protocol.getSenderId() != network.peerID){
-            //TODO: check if chunk is already stored as well
+            for (int i = 0; i < Log.logs.size(); i++){
+                if (Log.logs.get(i).getFileId().equals(protocol.getFileId())){
+                    if (Log.logs.get(i).getChunkNo() == protocol.getChunkNo()){
+                        System.out.println("CHUNK already STORED");
+                        return;
+                    }
+                }
+            }
+
             thread.start();
         }
         else {
@@ -36,6 +45,8 @@ public class Putchunk extends Worker {
         catch (IOException e){
             e.printStackTrace();
         }
+
+        Log.logs.add(new Log.FileLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg()));
 
         //reply with STORED
         Protocol stored = new Protocol();

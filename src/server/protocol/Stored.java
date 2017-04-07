@@ -1,5 +1,6 @@
 package server.protocol;
 
+import server.Log;
 import server.MNetwork;
 import server.thread.Request;
 import server.thread.RequestWorker;
@@ -21,6 +22,16 @@ public class Stored extends Worker {
 
     public void run(){
         System.out.println("Handling STORED");
+
+        for (int i = 0; i < Log.logs.size(); i++){
+            if (Log.logs.get(i).getFileId().equals(protocol.getFileId())){
+                if (Log.logs.get(i).getChunkNo() == protocol.getChunkNo()){
+                    Log.logs.get(i).incReplication();
+                    break;
+                }
+            }
+        }
+
         try {
             RequestWorker.responseQueue.put(protocol);
             System.out.println("Sending STORED to RequestWorker");
