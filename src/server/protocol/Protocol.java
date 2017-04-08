@@ -3,6 +3,7 @@ package server.protocol;
 import server.MNetwork;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
@@ -30,13 +31,18 @@ public class Protocol {
 
     public Protocol(){}
 
-    public Protocol(String message){
+    public Protocol(String message) {
 
         String[] headAndBody = message.split(CRLF);
         String header = headAndBody[0];
 
         if (headAndBody.length != 1){
-            this.body = headAndBody[1].getBytes();
+            try {
+                this.body = headAndBody[1].getBytes("ISO-8859-1");
+            }
+            catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
         }
 
         String[] parts = header.split(" ");
@@ -149,6 +155,12 @@ public class Protocol {
         }
 
         if (this.messageType.equals(PUTCHUNK) || this.messageType.equals(CHUNK)){
+            try {
+                String stringBody = new String(this.body, "ISO-8859-1");
+            }
+            catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
             return header + CRLF + this.body;
         }
         else {
@@ -186,17 +198,4 @@ public class Protocol {
             e.printStackTrace();
         }
     }
-/*
-    public static void main(String args[]){
-
-        //TODO: fix protocols that result in error
-
-
-        Protocol p = new Protocol(putchunk1);
-
-
-        p.printMessage();
-        System.out.println(p.toString());
-    }
-    */
 }

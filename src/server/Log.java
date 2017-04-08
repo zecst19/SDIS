@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class Log {
 
-    public static class FileLog {
+    public static class BackupLog {
         private String fileId;
         private int chunkNo;
         private int replication;
@@ -12,7 +12,7 @@ public class Log {
         private boolean present;
         private ArrayList<Integer> peers;
 
-        public FileLog(String fileId, int chunkNo, int target){
+        public BackupLog(String fileId, int chunkNo, int target){
             this.fileId = fileId;
             this.chunkNo = chunkNo;
             this.target = target;
@@ -70,7 +70,65 @@ public class Log {
         }
     }
 
-    public static ArrayList<FileLog> logs;
+    public static class LocalLog {
+
+        private String fileId;
+        private int chunkNo;
+        private int replication;
+        private int desiredReplication;
+
+        public LocalLog(String fileId, int chunkNo, int desiredReplication) {
+            this.fileId = fileId;
+            this.chunkNo = chunkNo;
+            this.desiredReplication = desiredReplication;
+            this.replication = 1;
+        }
+
+        public String getFileId() {
+            return fileId;
+        }
+
+        public void setFileId(String fileId) {
+            this.fileId = fileId;
+        }
+
+        public int getChunkNo() {
+            return chunkNo;
+        }
+
+        public void setChunkNo(int chunkNo) {
+            this.chunkNo = chunkNo;
+        }
+
+        public int getReplication() {
+            return replication;
+        }
+
+        public void setReplication(int replication) {
+            this.replication = replication;
+        }
+
+        public void incReplication() {
+            this.replication++;
+        }
+
+        public void decReplication() {
+            this.replication--;
+        }
+
+        public int getDesiredReplication() {
+            return desiredReplication;
+        }
+
+        public void setDesiredReplication(int desiredReplication) {
+            this.desiredReplication = desiredReplication;
+        }
+    }
+
+    public static ArrayList<BackupLog> bLogs;
+    public static ArrayList<LocalLog> lLogs;
 
     public Log(){}
+
+
 }

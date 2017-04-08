@@ -18,9 +18,9 @@ public class Putchunk extends Worker {
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
         if (protocol.getSenderId() != network.peerID){
-            for (int i = 0; i < Log.logs.size(); i++){
-                if (Log.logs.get(i).getFileId().equals(protocol.getFileId())){
-                    if (Log.logs.get(i).getChunkNo() == protocol.getChunkNo()){
+            for (int i = 0; i < Log.bLogs.size(); i++){
+                if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
+                    if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
                         System.out.println("CHUNK already STORED");
                         return;
                     }
@@ -46,7 +46,7 @@ public class Putchunk extends Worker {
             e.printStackTrace();
         }
 
-        Log.logs.add(new Log.FileLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg()));
+        Log.bLogs.add(new Log.BackupLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg()));
 
         //reply with STORED
         Protocol stored = new Protocol();

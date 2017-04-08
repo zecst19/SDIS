@@ -1,7 +1,14 @@
 package server.protocol;
 
 import server.MNetwork;
+import server.Server;
 import server.thread.Worker;
+
+import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+
+import static server.Server.homedir;
 
 public class Delete extends Worker {
 
@@ -21,6 +28,8 @@ public class Delete extends Worker {
     }
 
     public void run(){
-        //TODO: delete chunk from filesystem
+        //TODO: test this
+        Path file = Paths.get(homedir + "backupfiles/" + protocol.getFileId() + "-" + protocol.getChunkNo());
+        file.toFile().delete();
     }
 }

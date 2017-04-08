@@ -23,10 +23,10 @@ public class Stored extends Worker {
     public void run(){
         System.out.println("Handling STORED");
 
-        for (int i = 0; i < Log.logs.size(); i++){
-            if (Log.logs.get(i).getFileId().equals(protocol.getFileId())){
-                if (Log.logs.get(i).getChunkNo() == protocol.getChunkNo()){
-                    Log.logs.get(i).incReplication();
+        for (int i = 0; i < Log.bLogs.size(); i++){
+            if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
+                if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
+                    Log.bLogs.get(i).incReplication();
                     break;
                 }
             }

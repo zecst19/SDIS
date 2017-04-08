@@ -1,6 +1,8 @@
 package server.thread;
 
+import server.Log;
 import server.MNetwork;
+import server.Server;
 import server.protocol.Protocol;
 
 import java.util.concurrent.BlockingQueue;
@@ -29,7 +31,6 @@ public class RequestWorker implements Runnable {
     }
 
     public void run() {
-        //TODO: protocol actions are to be initiated here (backup, restore, delete, manage storage, retrieve info)
         //still have to choose between udp, tcp or rmi
 
         responseQueue.clear();
@@ -39,15 +40,11 @@ public class RequestWorker implements Runnable {
         try {
             while ((request = requestQueue.take()) != null ){
                 if (request.getMessageType().equals(request.PUTCHUNK)){
-                    //TODO: split chunks bigger than 64kB
                     //send PUTCHUNK over MDB
                     request.sendMessage(network.MDB);
 
                     //wait
                     Protocol p;
-
-
-                    int actualReplication = 0;
 
                     for (int i = 0; i < 5; i++){
                         if (i > 0){
@@ -55,9 +52,10 @@ public class RequestWorker implements Runnable {
                         } else {
                             System.out.println("Waiting for STORED");
                         }
-                        //TODO: replace this and store information about where each chunk is
 
-                        //TODO: send PUTCHUNK again
+                        int actualReplication = 0;
+                        request.sendMessage(network.MDB);
+
                         long start = System.currentTimeMillis();
                         long end = start + (2^i)*1000;
                         while(System.currentTimeMillis() < end) {
@@ -67,14 +65,29 @@ public class RequestWorker implements Runnable {
                                         && p.getChunkNo() == request.getChunkNo()
                                         && p.getMessageType().equals(p.STORED)){
 
-                                    actualReplication++;
-                                    System.out.println("replication++");
+                                    boolean firstStored = true;
+                                    for (int j = 0; j < Log.lLogs.size(); j++){
+                                        if (Log.lLogs.get(j).getFileId().equals(p.getFileId())){
+                                            if (Log.lLogs.get(j).getChunkNo() == p.getChunkNo()){
+
+                                                Log.lLogs.get(j).incReplication();
+                                                actualReplication = Log.lLogs.get(j).getReplication();
+                                                System.out.println("replication++");
+                                                firstStored = false;
+                                                break;
+                                            }
+                                        }
+                                    }
+                                    if (firstStored == true){
+                                        Log.lLogs.add(new Log.LocalLog(p.getFileId(), p.getChunkNo(), p.getReplicationDeg()));
+                                    }
                                 }
                             }
                         }
 
                         if (actualReplication >= request.getReplicationDeg()){
-                            System.out.println("Finished");
+                            System.out.println("Finished BACKUP");
+                            Server.replyQueue.put(new Protocol());
                             break;
                         }
                     }
@@ -91,17 +104,21 @@ public class RequestWorker implements Runnable {
                                 && p.getChunkNo() == request.getChunkNo()
                                 && p.getMessageType().equals(p.CHUNK)){
 
-                            System.out.println("CHUNK is here ready to be handled");
-                            //TODO: send results to client
+                            Server.replyQueue.put(p);
+                            System.out.println("Finished fetching CHUNK");
+                            break;
                         }
                     }
                 }
                 else if (request.getMessageType().equals(request.DELETE)){
                     //send DELETE over MC
                     request.sendMessage(network.MC);
-                }
-                else if (request.getMessageType().equals(request.REMOVED)){
 
+                    for (int i = 0; i < Log.lLogs.size(); i++){
+                        if (Log.lLogs.get(i).getFileId().equals(request.getFileId())){
+                            Log.lLogs.remove(i);
+                        }
+                    }
                 }
                 else {
                     System.out.println("Invalid Protocol");
