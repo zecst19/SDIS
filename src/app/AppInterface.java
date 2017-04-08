@@ -35,5 +35,5 @@ public class AppInterface extends Remote{
 
     public String reclaimenh(long space) throws RemoteException{
 		//o mesmo que o primeiro
-  }x
+    }
 }
