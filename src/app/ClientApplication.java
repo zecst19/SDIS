@@ -18,8 +18,8 @@ public class ClientApplication {
 
     Registry registry = null;
     registry = LocateRegistry.getRegistry();
-    Interface interface = null;
-    interface = (Interface) registry.lookup(peer_ap);
+    AppInterface appInterface = null;
+    appInterface = (AppInterface) registry.lookup(peer_ap);
 
 
     if(sub_protocol == "BACKUP"){
@@ -28,7 +28,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = interface.backup();
+      msg = appInterface.backup();
       System.out.println(msg);
 
     }else if(sub_protocol == "RESTORE"){
@@ -37,7 +37,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = interface.restore();
+      msg = appInterface.restore();
       System.out.println(msg);
 
     }else if(sub_protocol == "DELETE"){
@@ -46,7 +46,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = interface.delete();
+      msg = appInterface.delete();
       System.out.println(msg);
 
     }else if(sub_protocol == "RECLAIM"){
@@ -55,7 +55,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = interface.reclaim();
+      msg = appInterface.reclaim();
       System.out.println(msg);
 
     }else if(sub_protocol == "STATE"){
@@ -64,7 +64,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = interface.state();
+      msg = appInterface.state();
       System.out.println(msg);
 
     }else{

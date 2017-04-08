@@ -3,7 +3,7 @@ package app;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public class Interface extends Remote{
+public class AppInterface extends Remote{
 
     public String backup(String file, int rep_degree) throws RemoteException{
     	//fazer o backup, se funcionar retornar uma msg a dizer que o ficheiro file foi backed up com sucesso, se nao der msg a dizer que nao deu
