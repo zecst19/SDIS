@@ -7,6 +7,13 @@ import java.rmi.registry.Registry;
 import java.io.IOException;
 
 public class ClientApplication {
+
+  private static String peer_ap;
+  private static String sub_protocol;
+  private static String file;
+  private static int rep_degree;
+
+
   public static void main(String[] args) throws IOException{
 
     if(args.length < 2 || args.length > 4){
@@ -14,18 +21,24 @@ public class ClientApplication {
       System.exit(1);
     }
 
-    String peer_ap = args[0];
-    String sub_protocol = args[1];
-    String file = args[2];
-    int rep_degree =Integer.parseInt(args[3]);
+    peer_ap = args[0];
+    sub_protocol = args[1];
+    file = args[2];
+    rep_degree =Integer.parseInt(args[3]);
 
+    
 
     Registry registry = null;
     registry = LocateRegistry.getRegistry();
     AppInterface appInterface = null;
+    try{
     appInterface = (AppInterface) registry.lookup(peer_ap);
+    }catch(NotBoundException e){
+    	e.printStackTrace();
+    }
 
-
+    String msg;
+    
     if(sub_protocol == "BACKUP"){
       if(args.length != 6){
         System.out.println("Wrong number of arguments for BACKUP protocol.");
@@ -86,7 +99,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = appInterface.reclaim(file);
+      msg = appInterface.reclaim(Long.parseLong(file));
       System.out.println(msg);
 
     }else if(sub_protocol == "RECLAIMENH"){
@@ -95,7 +108,7 @@ public class ClientApplication {
         System.exit(1);
       }
 
-      msg = appInterface.reclaimenh(file);
+      msg = appInterface.reclaimenh(Long.parseLong(file));
       System.out.println(msg);
 
     }/*else if(sub_protocol == "STATE"){
@@ -110,7 +123,18 @@ public class ClientApplication {
     }*/else{
       System.out.println("Invalid sub_protocol!");
       System.exit(1);
-    }
-
+    }  
+  }
+  
+  public static String getFileName() {
+	  return file;
+  }
+  
+  public static int getRepDegree() {
+	  return rep_degree;
+  }
+  
+  public static String getSubProtocol() {
+	  return file;
   }
 }
