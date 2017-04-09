@@ -5,6 +5,7 @@ public class MNetwork {
     public static int[] ports;             //{4678,          3215,        9876}
     public int peerID;
     public final int CHUNK_SIZE = 64000;
+    public final int MAX_HEADER_SIZE = 300;//aproximation because there is no limit in spaces in between arguments
     public final String VERSION = "1.0";
     public int MC, MDB, MDR;
 

@@ -72,14 +72,15 @@ public class Server {
         //TODO: finish
         Protocol request;
 
+        //TODO: cant be hard coded
+        String filename = "example.txt";    //filename will be read from client request
+
         replyQueue = new LinkedBlockingDeque<>();
 
 //        while (true /* listening to client requests */){
             //TODO: parse info from client request
 
             if (network.peerID == 1){//BACKUP
-                //....
-                String filename = "example.txt";    //filename will be read from client request
                 int replication = 1;                //replication will be read from client request
                 FileHelper fh = new FileHelper();
                 fh.readLocalFile(filename);
@@ -104,7 +105,6 @@ public class Server {
                 System.out.println("Every CHUNK has been backed up");
             }
             if (network.peerID == 1){//RESTORE
-                String filename = "example.txt";    //filename will be read from client request
                 FileHelper fh = new FileHelper();
 
                 int nrChunks = 0;
@@ -141,8 +141,9 @@ public class Server {
                 byte[] body = file.restichFile();
 
                 try {
-                    Path f = Paths.get("/home/gustavo/" + "example.txt");
+                    Path f = Paths.get("/home/gustavo/" + filename);
                     Files.write(f, body);
+                    System.out.println("FINISHED RESTORING FILE");
                 }
                 catch (IOException e){
                     e.printStackTrace();

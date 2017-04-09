@@ -5,6 +5,7 @@ import server.protocol.*;
 
 import javax.swing.plaf.synth.SynthEditorPaneUI;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.*;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -65,47 +66,60 @@ public class Listener implements Runnable {
 
         while (running){
             //listen to and handle requests
-            byte[] msg = new byte[network.CHUNK_SIZE];
+            byte[] msg = new byte[network.CHUNK_SIZE + network.MAX_HEADER_SIZE];
             DatagramPacket mPacket = new DatagramPacket(msg, msg.length);
+
             try {
                 mSocket.receive(mPacket);
             }
             catch (IOException e){
                 e.printStackTrace();
             }
-            Protocol p = new Protocol(new String(mPacket.getData()));
 
-            //all conditions are verified on worker threads
-            if (p.getMessageType().equals(p.PUTCHUNK)){
-                //deploy worker
-                System.out.println("Received PUTCHUNK");
-                new Putchunk(network, p).start();
-            }
-            else if (p.getMessageType().equals(p.STORED)){
-                //deploy worker
-                System.out.println("Received STORED");
-                new Stored(network, p).start();
-            }
-            else if (p.getMessageType().equals(p.GETCHUNK)){
-                //deploy worker
-                System.out.println("Received GETCHUNK");
-                new Getchunk(network, p).start();
-            }
-            else if (p.getMessageType().equals(p.CHUNK)){
-                //deploy worker
-                System.out.println("Received CHUNK");
-                new Chunk(network, p).start();
-            }
-            else if (p.getMessageType().equals(p.DELETE)){
-                //deploy worker
-                new Delete(network, p).start();
-            }
-            else if (p.getMessageType().equals(p.REMOVED)){
-                //deploy worker
-                new Removed(network, p).start();
-            }
-            else this.stop();
+            int size = mPacket.getLength();
+            byte[] data = new byte[size];
 
+            for (int i = 0; i < size; i++){
+                data[i] = msg[i];
+            }
+
+            try {
+                Protocol p = new Protocol(new String(data, "ISO-8859-1"));
+
+                //all conditions are verified on worker threads
+                if (p.getMessageType().equals(p.PUTCHUNK)){
+                    //deploy worker
+                    System.out.println("Received PUTCHUNK");
+                    new Putchunk(network, p).start();
+                }
+                else if (p.getMessageType().equals(p.STORED)){
+                    //deploy worker
+                    System.out.println("Received STORED");
+                    new Stored(network, p).start();
+                }
+                else if (p.getMessageType().equals(p.GETCHUNK)){
+                    //deploy worker
+                    System.out.println("Received GETCHUNK");
+                    new Getchunk(network, p).start();
+                }
+                else if (p.getMessageType().equals(p.CHUNK)){
+                    //deploy worker
+                    System.out.println("Received CHUNK");
+                    new Chunk(network, p).start();
+                }
+                else if (p.getMessageType().equals(p.DELETE)){
+                    //deploy worker
+                    new Delete(network, p).start();
+                }
+                else if (p.getMessageType().equals(p.REMOVED)){
+                    //deploy worker
+                    new Removed(network, p).start();
+                }
+                else this.stop();
+            }
+            catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
         }
     }
 }

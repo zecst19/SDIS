@@ -1,6 +1,9 @@
 package server.protocol;
 
+import fileSystem.FSChunk;
+import server.Log;
 import server.MNetwork;
+import server.Server;
 import server.thread.Worker;
 
 import java.util.concurrent.BlockingQueue;
@@ -17,9 +20,15 @@ public class Getchunk extends Worker {
     public void start(){
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
-        //TODO: and if this peer has copy of requested chunk
         if (protocol.getSenderId() != network.peerID /*  */){
-            thread.start();
+            for (int i = 0; i < Log.bLogs.size(); i++){
+                if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
+                    if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
+                        thread.start();
+                    }
+                }
+            }
+            System.out.println("CHUNK not present");
         }
         else {
             System.out.println("Ignoring GETCHUNK");
@@ -27,7 +36,6 @@ public class Getchunk extends Worker {
     }
 
     public void run(){
-        //TODO: handle request (retrieve chunk from filesystem)
         System.out.println("Handling GETCHUNK");
 
         //reply with CHUNK if no CHUNK received
@@ -39,7 +47,27 @@ public class Getchunk extends Worker {
         }
 
         System.out.println("Finished Waiting");
-        if (chunkQueue.isEmpty()){
+        boolean first = false;
+        Protocol p;
+
+        try {
+            if (chunkQueue.isEmpty()){
+                first = true;
+            }
+            else if ((p = chunkQueue.take()) != null){
+                if (p.getFileId().equals(protocol.getFileId())){
+                    if (p.getChunkNo() == protocol.getChunkNo()){
+                        first = true;
+                    }
+                }
+            }
+        }
+        catch (InterruptedException e){
+            e.printStackTrace();
+        }
+
+
+        if (first){
             Protocol chunk = new Protocol();
             chunk.setNetwork(network);
             chunk.setMessageType(chunk.CHUNK);
@@ -47,8 +75,8 @@ public class Getchunk extends Worker {
             chunk.setSenderId(network.peerID);
             chunk.setFileId(protocol.getFileId());
             chunk.setChunkNo(protocol.getChunkNo());
-            chunk.setBody(protocol.getBody());
-
+            FSChunk fc = new FSChunk(Server.homedir + "backupfiles/" + protocol.getFileId() + "-" + protocol.getChunkNo());
+            chunk.setBody(fc.getBody());
 
             chunk.sendMessage(network.MDR);
         }

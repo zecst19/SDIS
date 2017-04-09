@@ -5,6 +5,7 @@ import server.MNetwork;
 import server.Server;
 import server.protocol.Protocol;
 
+import java.io.UnsupportedEncodingException;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -60,7 +61,6 @@ public class RequestWorker implements Runnable {
                         long end = start + (2^i)*1000;
                         while(System.currentTimeMillis() < end) {
                             if ((p = responseQueue.poll()) != null){    //queue will be filled with STORED messages
-                                System.out.println("You've got mail");
                                 if (p.getFileId().equals(request.getFileId())
                                         && p.getChunkNo() == request.getChunkNo()
                                         && p.getMessageType().equals(p.STORED)){

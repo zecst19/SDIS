@@ -2,10 +2,12 @@ package server.protocol;
 
 import server.Log;
 import server.MNetwork;
+import server.Server;
 import server.thread.Worker;
 import fileSystem.*;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 
 public class Putchunk extends Worker {
 
@@ -41,6 +43,16 @@ public class Putchunk extends Worker {
 
         try {
             fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
+
+            //*******
+            try {
+                System.out.println("########" + new String(protocol.getBody(), "ISO-8859-1") + "#######");
+                System.out.println("###111#####" + new String(new FSChunk(Server.homedir + "backupfiles/" +protocol.getFileId() + "-" + protocol.getChunkNo()).getBody(), "ISO-8859-1") + "#######");
+            }
+            catch (UnsupportedEncodingException e){
+                e.printStackTrace();
+            }
+
         }
         catch (IOException e){
             e.printStackTrace();

@@ -3,6 +3,7 @@ package fileSystem;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.net.Inet4Address;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -65,7 +66,7 @@ public class FileHelper {
                 else {
                     int rest = data.length - (MAX_CHUNK_SIZE * i);
                     if (rest == 0){
-                        body = null;
+                        body = new byte[0];
                     }
                     else {
                         body = new byte[rest];
@@ -155,5 +156,19 @@ public class FileHelper {
         }
 
         return strbuf.toString();
+    }
+
+    public static void main(String args[]){
+        FileHelper fh = new FileHelper();
+        fh.readLocalFile("spotty.jpg");
+        byte[] data = fh.restichFile();
+
+        try {
+            String s = new String(data, "ISO-8859-1");
+            System.out.println(s);
+        }
+        catch (UnsupportedEncodingException e){
+            e.printStackTrace();
+        }
     }
 }

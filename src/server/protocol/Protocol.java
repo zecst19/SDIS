@@ -38,7 +38,12 @@ public class Protocol {
 
         if (headAndBody.length != 1){
             try {
-                this.body = headAndBody[1].getBytes("ISO-8859-1");
+                if (headAndBody[1].length() == 0){
+                    this.body = new byte[0];
+                }
+                else {
+                    this.body = headAndBody[1].getBytes("ISO-8859-1");
+                }
             }
             catch (UnsupportedEncodingException e){
                 e.printStackTrace();
@@ -156,12 +161,17 @@ public class Protocol {
 
         if (this.messageType.equals(PUTCHUNK) || this.messageType.equals(CHUNK)){
             try {
-                String stringBody = new String(this.body, "ISO-8859-1");
+                String stringBody = "";
+                if (this.body.length != 0){
+                    stringBody = new String(this.body, "ISO-8859-1");
+                }
+
+                return header + CRLF + stringBody;
             }
             catch (UnsupportedEncodingException e){
                 e.printStackTrace();
             }
-            return header + CRLF + this.body;
+            return header + CRLF;
         }
         else {
             return header + CRLF;
@@ -188,8 +198,8 @@ public class Protocol {
     public void sendMessage(int mType){
         try (DatagramSocket socket = new DatagramSocket()) {
             InetAddress address = InetAddress.getByName(network.addresses[mType]);
-            DatagramPacket packet = new DatagramPacket(this.toString().getBytes(),
-                    this.toString().length(), address, network.ports[mType]);
+            DatagramPacket packet = new DatagramPacket(this.toString().getBytes("ISO-8859-1"),
+                    this.toString().getBytes("ISO-8859-1").length, address, network.ports[mType]);
             socket.send(packet);
 
             System.out.println("SENDMESSAGE: " + this.toString());
