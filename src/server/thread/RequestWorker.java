@@ -47,6 +47,8 @@ public class RequestWorker implements Runnable {
                     //wait
                     Protocol p;
 
+                    //Log.lLogs.add(new Log.LocalLog())
+
                     for (int i = 0; i < 5; i++){
                         if (i > 0){
                             System.out.println("Trying again (" + i + ")");
@@ -70,23 +72,27 @@ public class RequestWorker implements Runnable {
                                         if (Log.lLogs.get(j).getFileId().equals(p.getFileId())){
                                             if (Log.lLogs.get(j).getChunkNo() == p.getChunkNo()){
 
+                                                System.out.println("3333333333333333333333333333333");
                                                 Log.lLogs.get(j).incReplication();
                                                 actualReplication = Log.lLogs.get(j).getReplication();
-                                                System.out.println("replication++");
+                                                System.out.println("replication++ " + actualReplication);
                                                 firstStored = false;
                                                 break;
                                             }
                                         }
                                     }
                                     if (firstStored == true){
+                                        System.out.println("1111111111111111111111111111");
                                         Log.lLogs.add(new Log.LocalLog(p.getFileId(), p.getChunkNo(), p.getReplicationDeg()));
+                                        actualReplication = 1;
                                     }
                                 }
                             }
                         }
-
+                        System.out.println("22222222222222222222222222222");
+                        System.out.println("ACTUAL: " + actualReplication + "--- DESIRED: " + request.getReplicationDeg());
                         if (actualReplication >= request.getReplicationDeg()){
-                            System.out.println("Finished BACKUP");
+                            System.out.println("Finished CHUNK BACKUP");
                             Server.replyQueue.put(new Protocol());
                             break;
                         }

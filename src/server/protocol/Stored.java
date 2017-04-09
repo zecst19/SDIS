@@ -2,7 +2,6 @@ package server.protocol;
 
 import server.Log;
 import server.MNetwork;
-import server.thread.Request;
 import server.thread.RequestWorker;
 import server.thread.Worker;
 

@@ -44,7 +44,6 @@ public class Putchunk extends Worker {
         try {
             fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
 
-            //*******
             try {
                 System.out.println("########" + new String(protocol.getBody(), "ISO-8859-1") + "#######");
                 System.out.println("###111#####" + new String(new FSChunk(Server.homedir + "backupfiles/" +protocol.getFileId() + "-" + protocol.getChunkNo()).getBody(), "ISO-8859-1") + "#######");
