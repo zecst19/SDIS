@@ -7,6 +7,13 @@ import java.rmi.registry.Registry;
 import java.io.IOException;
 
 public class ClientApplication {
+
+  String peer_ap;
+  String sub_protocol;
+  String file;
+  int rep_degree;
+
+
   public static void main(String[] args) throws IOException{
 
     if(args.length < 2 || args.length > 4){
@@ -14,10 +21,10 @@ public class ClientApplication {
       System.exit(1);
     }
 
-    String peer_ap = args[0];
-    String sub_protocol = args[1];
-    String file = args[2];
-    int rep_degree =Integer.parseInt(args[3]);
+    peer_ap = args[0];
+    sub_protocol = args[1];
+    file = args[2];
+    rep_degree =Integer.parseInt(args[3]);
 
 
     Registry registry = null;
