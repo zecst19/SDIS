@@ -1,5 +1,7 @@
 package client;
 
+import server.Message;
+
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 

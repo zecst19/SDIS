@@ -5,6 +5,8 @@ import fileSystem.FileHelper;
 import server.protocol.Protocol;
 import server.thread.Listener;
 import server.thread.RequestWorker;
+import server.Message;
+
 
 import java.io.File;
 import java.io.IOException;
@@ -15,11 +17,16 @@ import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.rmi.registry.Registry;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 
 public class Server {
     public static final String homedir = "/home/gustavo/";
     public static BlockingQueue<Protocol> replyQueue;
 
+    public Server() {}
 
     public static void main(String[] args) throws IOException, InterruptedException, NoSuchAlgorithmException {
         //Server <Protocol Version> <ServerId> <Server Access Point> <MC addr> <MC port> <MDB addr> <MDB port> <MDR addr> <MDR port>
@@ -189,6 +196,5 @@ public class Server {
        }
    }
 
-
-    }
 }
+
