@@ -46,6 +46,7 @@ public class RequestWorker implements Runnable {
 
                     //wait
                     Protocol p;
+                    boolean firstStored = true;
 
                     //Log.lLogs.add(new Log.LocalLog())
 
@@ -67,30 +68,40 @@ public class RequestWorker implements Runnable {
                                         && p.getChunkNo() == request.getChunkNo()
                                         && p.getMessageType().equals(p.STORED)){
 
-                                    boolean firstStored = true;
                                     for (int j = 0; j < Log.lLogs.size(); j++){
                                         if (Log.lLogs.get(j).getFileId().equals(p.getFileId())){
                                             if (Log.lLogs.get(j).getChunkNo() == p.getChunkNo()){
-
-                                                System.out.println("3333333333333333333333333333333");
-                                                Log.lLogs.get(j).incReplication();
-                                                actualReplication = Log.lLogs.get(j).getReplication();
-                                                System.out.println("replication++ " + actualReplication);
-                                                firstStored = false;
-                                                break;
+                                                boolean duplicate = false;
+                                                for (int k = 0; k < Log.lLogs.get(j).peers.size(); k++){
+                                                    if (Log.lLogs.get(j).peers.get(k) == p.getSenderId()){
+                                                        duplicate = true;
+                                                        firstStored = false;
+                                                        break;
+                                                    }
+                                                }
+                                                if (!duplicate){
+                                                    Log.lLogs.get(j).peers.add(p.getSenderId());
+                                                    actualReplication = Log.lLogs.get(j).peers.size();
+                                                    firstStored = false;
+                                                    System.out.println(Log.lLogs.get(j).getFileId()+"-"+Log.lLogs.get(j).getChunkNo() + " now also in " + p.getSenderId());
+                                                    break;
+                                                }
                                             }
                                         }
                                     }
-                                    if (firstStored == true){
-                                        System.out.println("1111111111111111111111111111");
-                                        Log.lLogs.add(new Log.LocalLog(p.getFileId(), p.getChunkNo(), p.getReplicationDeg()));
+                                    if (firstStored){
+
+                                        Log.LocalLog l = new Log.LocalLog(p.getFileId(), p.getChunkNo(), p.getReplicationDeg());
+                                        l.peers.add(p.getSenderId());
+                                        Log.lLogs.add(l);
                                         actualReplication = 1;
+
+                                        System.out.println("ADDED TO LOG: " + l.getFileId() + "-" + l.getChunkNo() + " in peer " + p.getSenderId());
                                     }
                                 }
                             }
                         }
-                        System.out.println("22222222222222222222222222222");
-                        System.out.println("ACTUAL: " + actualReplication + "--- DESIRED: " + request.getReplicationDeg());
+                        System.out.println("ACTUAL: " + actualReplication + " --- DESIRED: " + request.getReplicationDeg());
                         if (actualReplication >= request.getReplicationDeg()){
                             System.out.println("Finished CHUNK BACKUP");
                             Server.replyQueue.put(new Protocol());
@@ -117,14 +128,17 @@ public class RequestWorker implements Runnable {
                     }
                 }
                 else if (request.getMessageType().equals(request.DELETE)){
-                    //send DELETE over MC
-                    request.sendMessage(network.MC);
 
                     for (int i = 0; i < Log.lLogs.size(); i++){
+                        System.out.println("REQFID- " + request.getFileId());
+                        System.out.println("########" + Log.lLogs.get(i).getFileId() + "-" + Log.lLogs.get(i).getChunkNo() + "####" + i);
+
                         if (Log.lLogs.get(i).getFileId().equals(request.getFileId())){
-                            Log.lLogs.remove(i);
+                            Log.lLogs.remove(i--);
                         }
                     }
+                    //send DELETE over MC
+                    request.sendMessage(network.MC);
                 }
                 else {
                     System.out.println("Invalid Protocol");

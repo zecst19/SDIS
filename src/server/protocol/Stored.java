@@ -25,8 +25,19 @@ public class Stored extends Worker {
         for (int i = 0; i < Log.bLogs.size(); i++){
             if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
                 if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
-                    Log.bLogs.get(i).incReplication();
-                    break;
+
+                    boolean duplicated = false;
+                    for (int j = 0; j < Log.bLogs.get(i).peers.size(); j++){
+                        if (Log.bLogs.get(i).peers.get(j) == protocol.getSenderId()){
+                            duplicated = true;
+                            break;
+                        }
+                    }
+
+                    if (!duplicated){
+                        Log.bLogs.get(i).peers.add(protocol.getSenderId());
+                        break;
+                    }
                 }
             }
         }

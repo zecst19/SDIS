@@ -20,15 +20,6 @@ public class Putchunk extends Worker {
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
         if (protocol.getSenderId() != network.peerID){
-            for (int i = 0; i < Log.bLogs.size(); i++){
-                if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
-                    if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
-                        System.out.println("CHUNK already STORED");
-                        return;
-                    }
-                }
-            }
-
             thread.start();
         }
         else {
@@ -38,27 +29,46 @@ public class Putchunk extends Worker {
 
     public void run(){
         System.out.println("Handling PUTCHUNK");
-
-        FileHelper fh = new FileHelper();
-
-        try {
-            fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
+        if (Log.bLogs.isEmpty()){
+            FileHelper fh = new FileHelper();
 
             try {
-                System.out.println("########" + new String(protocol.getBody(), "ISO-8859-1") + "#######");
-                System.out.println("###111#####" + new String(new FSChunk(Server.homedir + "backupfiles/" +protocol.getFileId() + "-" + protocol.getChunkNo()).getBody(), "ISO-8859-1") + "#######");
+                fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
             }
-            catch (UnsupportedEncodingException e){
+            catch (IOException e){
                 e.printStackTrace();
             }
 
+            Log.BackupLog l = new Log.BackupLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg());
+            l.peers.add(protocol.getSenderId());
+            Log.bLogs.add(l);
         }
-        catch (IOException e){
-            e.printStackTrace();
+        else {
+            boolean duplicated = false;
+            for (int i = 0; i < Log.bLogs.size(); i++){
+                if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
+                    if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
+                        System.out.println("CHUNK already STORED");
+                        duplicated = true;
+                        break;
+                    }
+                }
+            }
+            if (!duplicated){
+                FileHelper fh = new FileHelper();
+
+                try {
+                    fh.writeChunk(new FSChunk(protocol.getFileId(), protocol.getChunkNo(), protocol.getBody()));
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+
+                Log.BackupLog l = new Log.BackupLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg());
+                l.peers.add(protocol.getSenderId());
+                Log.bLogs.add(l);
+            }
         }
-
-        Log.bLogs.add(new Log.BackupLog(protocol.getFileId(), protocol.getChunkNo(), protocol.getReplicationDeg()));
-
         //reply with STORED
         Protocol stored = new Protocol();
         stored.setNetwork(network);
@@ -76,5 +86,6 @@ public class Putchunk extends Worker {
         }
 
         stored.sendMessage(network.MC);
+        return;
     }
 }

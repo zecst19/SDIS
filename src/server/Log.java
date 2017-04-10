@@ -10,7 +10,7 @@ public class Log {
         private int replication;
         private int target; //desired replication
         private boolean present;
-        private ArrayList<Integer> peers;
+        public ArrayList<Integer> peers;
 
         public BackupLog(String fileId, int chunkNo, int target){
             this.fileId = fileId;
@@ -76,12 +76,14 @@ public class Log {
         private int chunkNo;
         private int replication;
         private int desiredReplication;
+        public ArrayList<Integer> peers;
 
         public LocalLog(String fileId, int chunkNo, int desiredReplication) {
             this.fileId = fileId;
             this.chunkNo = chunkNo;
             this.desiredReplication = desiredReplication;
             this.replication = 1;
+            this.peers = new ArrayList<>();
         }
 
         public String getFileId() {

@@ -202,7 +202,7 @@ public class Protocol {
                     this.toString().getBytes("ISO-8859-1").length, address, network.ports[mType]);
             socket.send(packet);
 
-            System.out.println("SENDMESSAGE: " + this.toString());
+            //System.out.println("SENDMESSAGE: " + this.toString());
 
         } catch (IOException e) {
             e.printStackTrace();

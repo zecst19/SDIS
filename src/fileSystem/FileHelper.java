@@ -119,7 +119,7 @@ public class FileHelper {
         long size = attributes.size();
 
         //Getting local mac address
-        //TODO: find out if there's a better way to do this
+        //TODO: make sure this is right before demo
         //eth0 if not on VM; enp0s9 otherwise
         Enumeration<InetAddress> netIface = NetworkInterface.getByName("enp0s9").getInetAddresses();
 
@@ -144,7 +144,7 @@ public class FileHelper {
 
         //Creating fileId unique string
         String fileId = filename + owner + created + dateModified + size;
-        System.out.println(fileId);
+        //System.out.println(fileId);
 
 
         MessageDigest digest = MessageDigest.getInstance("SHA-256");

@@ -70,7 +70,7 @@ public class TestApp {
                 System.exit(1);
             }
 
-            request = new Request("Delete", file);
+            request = new Request("DELETE", file);
         }
         else if(sub_protocol.equals("RECLAIM")){
             if(args.length != 3){

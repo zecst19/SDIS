@@ -109,6 +109,7 @@ public class Listener implements Runnable {
                 }
                 else if (p.getMessageType().equals(p.DELETE)){
                     //deploy worker
+                    System.out.println("Received DELETE");
                     new Delete(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.REMOVED)){

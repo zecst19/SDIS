@@ -1,10 +1,13 @@
 package server.protocol;
 
+import server.Log;
 import server.MNetwork;
 import server.Server;
 import server.thread.Worker;
 
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -29,7 +32,19 @@ public class Delete extends Worker {
 
     public void run(){
         //TODO: test this
-        Path file = Paths.get(homedir + "backupfiles/" + protocol.getFileId() + "-" + protocol.getChunkNo());
-        file.toFile().delete();
+
+        for (int i = 0; i < Log.bLogs.size(); i++){
+            if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
+                Path file = Paths.get(Server.homedir + "backupfiles/" + protocol.getFileId() + "-" + Log.bLogs.get(i).getChunkNo());
+                System.out.println(Server.homedir + "backupfiles/" + protocol.getFileId() + "-" + Log.bLogs.get(i).getChunkNo());
+                try {
+                    Files.deleteIfExists(file);
+                    System.out.println("Deleted File Chunk");
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
+            }
+        }
     }
 }

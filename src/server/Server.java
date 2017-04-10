@@ -77,7 +77,7 @@ public class Server {
 
         while (true) {
             //get request
-            byte[] rbuf = new byte[255];
+            byte[] rbuf = new byte[512];
             DatagramSocket socket = new DatagramSocket(PORT);
             DatagramPacket packet = new DatagramPacket(rbuf, rbuf.length);
             socket.receive(packet);
