@@ -14,9 +14,6 @@ import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.concurrent.BlockingQueue;
@@ -24,7 +21,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 
 public class Server {
     public static final int PORT = 9636;
-    public static final String homedir = "/home/gustavo/";
+    public static final String homedir = "/tmp/";
     public static BlockingQueue<Protocol> replyQueue;
 
     public Server() {}
@@ -46,8 +43,6 @@ public class Server {
         //Create files and directories
         File backupfiles = new File(homedir + "backupfiles");
         backupfiles.mkdir();
-        File localfiles = new File(homedir + "localfiles");
-        localfiles.mkdir();
 
         Log.bLogs = new ArrayList<>();
         Log.lLogs = new ArrayList<>();
@@ -66,12 +61,11 @@ public class Server {
         listenerMDB.start();
         listenerMDR.start();
 
-        //TODO: finish
         Request cReq = new Request();
         Response resp;
         Protocol request;
 
-        String filename = "example.txt";
+        String filename = "";
 
         replyQueue = new LinkedBlockingDeque<>();
 
@@ -134,17 +128,31 @@ public class Server {
                     String requestString = "GETCHUNK 1.0 " + network.peerID + " " + fh.generateFileId(filename) + " " + i + "\r\n\r\n";
                     request = new Protocol(requestString);
                     RequestWorker.requestQueue.put(request);
+
+                    Thread.sleep(50);
                 }
 
                 Protocol reply;
                 FileHelper file = new FileHelper();
 
                 FSChunk[] chunks = new FSChunk[nrChunks];
+                ArrayList<Integer> chks = new ArrayList<>();
                 int replies = 0;
                 while ((reply = replyQueue.take()) != null) {
-                    chunks[replies] = new FSChunk(reply);
+                    System.out.println("%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%");
 
-                    replies++;
+                    boolean duplicate = false;
+                    for (int i = 0; i < chks.size(); i++){
+                        if (reply.getChunkNo() == chks.get(i)){
+                            duplicate = true;
+                            break;
+                        }
+                    }
+                    if (!duplicate){
+                        chunks[replies] = new FSChunk(reply);
+                        replies++;
+                    }
+
                     if (replies < nrChunks) {
                         continue;
                     } else break;

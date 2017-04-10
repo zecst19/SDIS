@@ -17,7 +17,7 @@ public class Chunk extends Worker {
     public void start(){
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
-        if (protocol.getSenderId() != network.peerID){ //mostly likely not needed, but hey, wth
+        if (protocol.getSenderId() != network.peerID){
             thread.start();
         }
         else {
@@ -27,10 +27,10 @@ public class Chunk extends Worker {
 
     public void run(){
         System.out.println("Handling CHUNK");
-        try {
+        try {/*
             Getchunk.chunkQueue.put(protocol);
             System.out.println("Sending CHUNK back to Getchunk to let him know he's not the first");
-
+*/
             //and
             RequestWorker.responseQueue.put(protocol);
             System.out.println("Sending CHUNK to ResponseQueue");

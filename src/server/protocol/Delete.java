@@ -31,12 +31,10 @@ public class Delete extends Worker {
     }
 
     public void run(){
-        //TODO: test this
 
         for (int i = 0; i < Log.bLogs.size(); i++){
             if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
                 Path file = Paths.get(Server.homedir + "backupfiles/" + protocol.getFileId() + "-" + Log.bLogs.get(i).getChunkNo());
-                System.out.println(Server.homedir + "backupfiles/" + protocol.getFileId() + "-" + Log.bLogs.get(i).getChunkNo());
                 try {
                     Files.deleteIfExists(file);
                     System.out.println("Deleted File Chunk");
@@ -44,6 +42,7 @@ public class Delete extends Worker {
                 catch (IOException e){
                     e.printStackTrace();
                 }
+                Log.bLogs.remove(i--);
             }
         }
     }

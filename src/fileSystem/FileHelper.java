@@ -1,5 +1,7 @@
 package fileSystem;
 
+import server.Server;
+
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -85,7 +87,7 @@ public class FileHelper {
     }
 
     public void writeChunk(FSChunk chunk) throws IOException{
-        Path file = Paths.get("/home/gustavo/backupfiles/" + chunk.getFileID() + "-" + chunk.getChunkNo());
+        Path file = Paths.get(Server.homedir + "backupfiles/" + chunk.getFileID() + "-" + chunk.getChunkNo());
         Files.write(file, chunk.getBody());
     }
 
@@ -121,7 +123,7 @@ public class FileHelper {
         //Getting local mac address
         //TODO: make sure this is right before demo
         //eth0 if not on VM; enp0s9 otherwise
-        Enumeration<InetAddress> netIface = NetworkInterface.getByName("enp0s9").getInetAddresses();
+        Enumeration<InetAddress> netIface = NetworkInterface.getByName("eth0").getInetAddresses();
 
         InetAddress localAddress = netIface.nextElement();
         while(netIface.hasMoreElements())
@@ -156,19 +158,5 @@ public class FileHelper {
         }
 
         return strbuf.toString();
-    }
-
-    public static void main(String args[]){
-        FileHelper fh = new FileHelper();
-        fh.readLocalFile("spotty.jpg");
-        byte[] data = fh.restichFile();
-
-        try {
-            String s = new String(data, "ISO-8859-1");
-            System.out.println(s);
-        }
-        catch (UnsupportedEncodingException e){
-            e.printStackTrace();
-        }
     }
 }

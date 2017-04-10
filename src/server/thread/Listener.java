@@ -89,27 +89,22 @@ public class Listener implements Runnable {
                 //all conditions are verified on worker threads
                 if (p.getMessageType().equals(p.PUTCHUNK)){
                     //deploy worker
-                    System.out.println("Received PUTCHUNK");
                     new Putchunk(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.STORED)){
                     //deploy worker
-                    System.out.println("Received STORED");
                     new Stored(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.GETCHUNK)){
                     //deploy worker
-                    System.out.println("Received GETCHUNK");
                     new Getchunk(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.CHUNK)){
                     //deploy worker
-                    System.out.println("Received CHUNK");
                     new Chunk(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.DELETE)){
                     //deploy worker
-                    System.out.println("Received DELETE");
                     new Delete(network, p).start();
                 }
                 else if (p.getMessageType().equals(p.REMOVED)){

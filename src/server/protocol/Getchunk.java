@@ -20,11 +20,12 @@ public class Getchunk extends Worker {
     public void start(){
         System.out.println("SenderID: " + protocol.getSenderId());
         System.out.println("My ID: " + network.peerID);
-        if (protocol.getSenderId() != network.peerID /*  */){
+        if (protocol.getSenderId() != network.peerID){
             for (int i = 0; i < Log.bLogs.size(); i++){
                 if (Log.bLogs.get(i).getFileId().equals(protocol.getFileId())){
                     if (Log.bLogs.get(i).getChunkNo() == protocol.getChunkNo()){
                         thread.start();
+                        return;
                     }
                 }
             }
@@ -40,7 +41,9 @@ public class Getchunk extends Worker {
 
         //reply with CHUNK if no CHUNK received
         try {
-            Thread.sleep(this.randomDelay());
+            int r = this.randomDelay();
+            System.out.println(r);
+            Thread.sleep(r);
         }
         catch (InterruptedException e){
             e.printStackTrace();
@@ -55,6 +58,8 @@ public class Getchunk extends Worker {
                 first = true;
             }
             else if ((p = chunkQueue.take()) != null){
+                System.out.println("#######################################################");
+                System.out.println(p.getSenderId());
                 if (p.getFileId().equals(protocol.getFileId())){
                     if (p.getChunkNo() == protocol.getChunkNo()){
                         first = true;
@@ -68,6 +73,7 @@ public class Getchunk extends Worker {
 
 
         if (first){
+            System.out.println("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$");
             Protocol chunk = new Protocol();
             chunk.setNetwork(network);
             chunk.setMessageType(chunk.CHUNK);

@@ -83,7 +83,6 @@ public class RequestWorker implements Runnable {
                                                     Log.lLogs.get(j).peers.add(p.getSenderId());
                                                     actualReplication = Log.lLogs.get(j).peers.size();
                                                     firstStored = false;
-                                                    System.out.println(Log.lLogs.get(j).getFileId()+"-"+Log.lLogs.get(j).getChunkNo() + " now also in " + p.getSenderId());
                                                     break;
                                                 }
                                             }
@@ -95,8 +94,6 @@ public class RequestWorker implements Runnable {
                                         l.peers.add(p.getSenderId());
                                         Log.lLogs.add(l);
                                         actualReplication = 1;
-
-                                        System.out.println("ADDED TO LOG: " + l.getFileId() + "-" + l.getChunkNo() + " in peer " + p.getSenderId());
                                     }
                                 }
                             }
@@ -115,7 +112,7 @@ public class RequestWorker implements Runnable {
                     //wait
                     Protocol p;
 
-                    while ((p = responseQueue.take()) != null ){
+                    while ((p = responseQueue.take()) != null ){//queue filled with CHUNKS
 
                         if (p.getFileId().equals(request.getFileId())
                                 && p.getChunkNo() == request.getChunkNo()
@@ -130,8 +127,6 @@ public class RequestWorker implements Runnable {
                 else if (request.getMessageType().equals(request.DELETE)){
 
                     for (int i = 0; i < Log.lLogs.size(); i++){
-                        System.out.println("REQFID- " + request.getFileId());
-                        System.out.println("########" + Log.lLogs.get(i).getFileId() + "-" + Log.lLogs.get(i).getChunkNo() + "####" + i);
 
                         if (Log.lLogs.get(i).getFileId().equals(request.getFileId())){
                             Log.lLogs.remove(i--);

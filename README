@@ -1,0 +1,18 @@
+(scripts need to run in this directory)
+compiling:
+
+	./make.sh
+
+running:
+--peer:
+	./run_peer.sh <peer_ID> <server_IP_address>
+
+--client:
+	./run_client.sh <server_IP_address> <sub_protocol> <opnd_1> <opnd_2>
+
+<sub_protocol> = {"BACKUP", "RESTORE", "DELETE", "STATE"}
+
+NOTE:
+	in order to be backed up files need to be located in src/ directory
+	restored files are copied to /tmp/ directory
+	chunks are backed up in /tmp/backupfiles/ named as: fileID + '-' + chunkNo
